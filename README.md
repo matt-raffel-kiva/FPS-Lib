@@ -1,5 +1,7 @@
 # FSP Library  
 
+__Please note__:  This project is in the inception phase. The details outlined below are subject to change as we gather feedback and refine our approach.
+
 ## Goal(s)  
 1. natural language libraries for consuming PA2 APIs   
 2. natural language tools for assisting with PA2 tasks  
