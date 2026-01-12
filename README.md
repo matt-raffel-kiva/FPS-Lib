@@ -14,6 +14,8 @@ Each library will be structured as follows:
 /LibraryName
     /docs
         - Documentation files (e.g., README.md, API reference)
+    / library    
+        - Compiled library files (e.g., DLLs, JARs, etc.) when applicable
     /src
         - Source code files
     /tests
