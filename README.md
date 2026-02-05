@@ -1,4 +1,5 @@
 # FSP Library  
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/matt-raffel-kiva/FPS-Lib)  
 
 __Please note__:  This project is in the inception phase. The details outlined below are subject to change as we gather feedback and refine our approach.
 
