@@ -4,10 +4,12 @@ DotNET Version 10 library for consuming Kiva PA2 api.
 Our partners will consume this library to interact with the Kiva PA2 API, which provides access to Kiva's lending data and allows partners to manage their interactions with Kiva's platform. The library will abstract away the complexities of making HTTP requests and handling responses, providing a simple and intuitive interface for developers.
 
 ## Specific instructions
-When given a task, first output a plan of proposed changes (files affected,
-what will change and why). Wait for explicit user confirmation before
-executing anything unless explicitly given permission to do so. 
+Always propose a plan before making file changes. List:
+- Files that will be modified/created/deleted
+- Summary of changes per file
+- Any risks or alternatives
 
+Do not proceed until the user says "approved", "yes", or "go ahead".
 
 ## More information
 - [Kiva PA2 API documentation](https://fps-sdk-portal.web.app/docs/overview)

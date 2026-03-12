@@ -1,11 +1,13 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Kiva.FPS.Lib.Contracts;
 
 namespace Kiva.FPS.Lib.API;
 
 /// <summary>
-/// 
+///
 /// </summary>
 public class Endpoint
 {
@@ -13,12 +15,16 @@ public class Endpoint
     public string Token {get => token;}
     public event EndpointLogMessage OnLogMessage;
     #endregion
-    
+
     #region private data
     private string token = string.Empty;
+    private DateTimeOffset tokenExpiry = DateTimeOffset.MinValue;
+
+    private record Auth0TokenResponse(
+        [property: JsonPropertyName("expires_in")] int ExpiresIn);
     #endregion
-    
-    #region public properties
+
+    #region public methods
     /// <summary>
     /// calls the appropriate login endpoint based on the Credentials.Audience
     /// see https://fps-sdk-portal.web.app/docs/overview/authentication
@@ -29,6 +35,14 @@ public class Endpoint
     public void Login(Credentials credentials)
     {
         // ---------------------------------------------------------------------------
+        // return early if the token is still valid
+        if (!string.IsNullOrEmpty(token) && DateTimeOffset.UtcNow < tokenExpiry)
+        {
+            LogMessage("Login skipped: existing token is still valid");
+            return;
+        }
+
+        // ---------------------------------------------------------------------------
         // create the http client
         using HttpClient client = new();
         client.DefaultRequestHeaders.Accept.Clear();
@@ -37,8 +51,8 @@ public class Endpoint
         // set accepted type to json
         client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-        
-        var parameters = new Dictionary<string, string> 
+
+        var parameters = new Dictionary<string, string>
         {
             { "client_id", credentials.ClientId },
             { "client_secret", credentials.ClientSecret },
@@ -46,7 +60,7 @@ public class Endpoint
             { "audience", credentials.Audience.ToAudienceString() },
             { "scope", credentials.Scopes.ToScopeString() }
         };
-        
+
         // ---------------------------------------------------------------------------
         // since the API expects the details to be posted as x-www-form-urlencoded
         // we have to properly encode each value
@@ -59,14 +73,20 @@ public class Endpoint
 
         // ---------------------------------------------------------------------------
         // process the response
-        if (response.StatusCode != HttpStatusCode.OK) 
+        if (response.StatusCode != HttpStatusCode.OK)
         {
             var result = response.Content.ReadAsStringAsync().Result;
             LogMessage($"Login error: {response.StatusCode}: {result}");
             throw new KivaDefaultException($"Login error: {response.StatusCode}: {result}");
         }
-        
+
         token = response.Content.ReadAsStringAsync().Result;
+
+        // ---------------------------------------------------------------------------
+        // parse expires_in to cache the token expiry (with a 60-second safety buffer)
+        var tokenData = JsonSerializer.Deserialize<Auth0TokenResponse>(token);
+        tokenExpiry = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(tokenData!.ExpiresIn - 60);
+
         LogMessage("Login complete");
     }
     #endregion
