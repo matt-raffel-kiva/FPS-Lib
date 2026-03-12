@@ -1,2 +1,6 @@
 .idea/
 .env
+.DS_Store
+
+# dotnet build paths
+bin/

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # 
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FPSLib", "FPSLib\FPSLib.csproj", "{971FB6E9-2FED-4FD1-B2A4-3D9B1F252DEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FPSLib", "src\FPSLib\FPSLib.csproj", "{971FB6E9-2FED-4FD1-B2A4-3D9B1F252DEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
