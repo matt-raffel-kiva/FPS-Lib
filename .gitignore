@@ -4,3 +4,4 @@
 
 # dotnet build paths
 bin/
+obj/
