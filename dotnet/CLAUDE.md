@@ -14,6 +14,10 @@ Do not proceed until the user says "approved", "yes", or "go ahead".
 ## More information
 - [Kiva PA2 API documentation](https://fps-sdk-portal.web.app/docs/overview)
 - [Swagger documentation](https://partnerapi.staging.kiva.org/swagger-ui/index.html)
+- [Api Docs Json](https://partnerapi.staging.kiva.org/v3/api-docs)
+
+All API endpoints use Bearer token authentication. The login method in the Endpoint type gets the token.
+
 
 ## Directories
 - `src/`: Source code for the library.

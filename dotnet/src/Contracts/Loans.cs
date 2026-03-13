@@ -1,6 +1,26 @@
 using System.Text.Json.Serialization;
 namespace Kiva.FPS.Lib.Contracts;
 
+// ---------- Loans / Query ----------
+public sealed class GetLoansRequest
+{
+    /// <summary>Custom query using PA2 search bar format.</summary>
+    public string? Query { get; set; }
+
+    /// <summary>
+    /// Filter by loan status.
+    /// Valid values: deleted, issue, issue_revising, issue_approving, reviewed,
+    /// fundRaising, refunded, raised, payingBack, ended, defaulted, expired, inactive_expired
+    /// </summary>
+    public string? Status { get; set; }
+
+    /// <summary>0-indexed offset for pagination.</summary>
+    public string? Offset { get; set; }
+
+    /// <summary>Number of records to return.</summary>
+    public string? Limit { get; set; }
+}
+
 // ---------- Loans / Config ----------
 public sealed class Loan
 {
