@@ -1,6 +1,7 @@
 .idea/
 .env
 .DS_Store
+.claude/
 
 # dotnet build paths
 bin/

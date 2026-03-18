@@ -16,6 +16,7 @@ public class Endpoint
     #region private data
     private readonly Credentials credentials;
     private readonly int partnerId;
+    private readonly int batchSize;
     private string token = string.Empty;
     private DateTimeOffset tokenExpiry = DateTimeOffset.MinValue;
 
@@ -29,10 +30,15 @@ public class Endpoint
     /// </summary>
     /// <param name="credentials">Kiva API credentials including audience and scopes.</param>
     /// <param name="partnerId">Your Kiva Partner ID.</param>
-    public Endpoint(Credentials credentials, int partnerId)
+    /// <param name="batchSize">
+    /// Number of repayments per batch POST in <see cref="CreateRepayments"/>.
+    /// Use -1 to send all repayments in a single call. Defaults to 200.
+    /// </param>
+    public Endpoint(Credentials credentials, int partnerId, int batchSize = 200)
     {
         this.credentials = credentials;
         this.partnerId = partnerId;
+        this.batchSize = batchSize;
     }
     #endregion
 
@@ -157,12 +163,46 @@ public class Endpoint
     }
 
     /// <summary>
-    /// Submits repayment records for the partner.
+    /// Submits repayment records for the partner in batches.
+    /// Failed batches are noted as problems in the returned list; remaining batches continue posting.
     /// </summary>
     public List<RepaymentResponse> CreateRepayments(RepaymentRequest request)
     {
         Login();
-        return Post<RepaymentRequest, List<RepaymentResponse>>($"/v3/partner/{partnerId}/repayments", request);
+        var results = new List<RepaymentResponse>();
+
+        IEnumerable<IEnumerable<Repayment>> batches = batchSize == -1
+            ? [request.Repayments]
+            : request.Repayments.Chunk(batchSize);
+
+        foreach (var batch in batches)
+        {
+            try
+            {
+                var batchRequest = new RepaymentRequest { Repayments = [.. batch] };
+                var batchResults = Post<RepaymentRequest, List<RepaymentResponse>>(
+                    $"/v3/partner/{partnerId}/repayments", batchRequest);
+                results.AddRange(batchResults);
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"CreateRepayments batch error: {ex.Message}");
+                results.Add(new RepaymentResponse
+                {
+                    Code = "batch_error",
+                    Message = ex.Message,
+                    Problems = batch.Select(r => new Problem
+                    {
+                        LoanId = r.LoanId,
+                        Details = ex.Message,
+                        Code = "batch_error",
+                        Severity = "error"
+                    }).ToList()
+                });
+            }
+        }
+
+        return results;
     }
 
     /// <summary>
