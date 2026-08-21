@@ -1,7 +1,7 @@
 # FSP Library  
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/matt-raffel-kiva/FPS-Lib)  
 
-__Please note__:  This project is in the inception phase. The details outlined below are subject to change as we gather feedback and refine our approach.
+__Please note__:  This project is in the inception phase. The details outlined below are subject to change as we gather feedback and refine our approach.  As of Aug 2026, we are contining to make updates, albeit slowly.
 
 ## Goal(s)  
 1. natural language libraries for consuming PA2 APIs   
